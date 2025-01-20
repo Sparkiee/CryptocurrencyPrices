@@ -22,7 +22,6 @@ set(IMGUI_SOURCES
         libraries/imgui/imgui_widgets.cpp
         libraries/imgui/backends/imgui_impl_glfw.cpp
         libraries/imgui/backends/imgui_impl_opengl3.cpp
-
 )
 
 # Add source files

@@ -40,7 +40,7 @@ int main() {
 
     // Initialize crypto data and client
     CryptoData data;
-    CryptoClient client("YOUR_API_KEY");
+    CryptoClient client("bdbc3a83-8c73-4f95-8564-4fb4b51a17d1");
 
     // Start data fetching thread
     std::thread fetchThread(dataFetchingThread, std::ref(client), std::ref(data));
