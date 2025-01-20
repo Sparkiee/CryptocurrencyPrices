@@ -34,3 +34,5 @@ cmake-build-*/
 # System files
 .DS_Store
 Thumbs.db
+
+.env
