@@ -10,7 +10,6 @@ add_executable(CryptoCurrencyPrices main.cpp)
 
 if (APPLE)
     target_link_libraries(CryptoCurrencyPrices PRIVATE
-            # קישור לספריות מתאימות ל-macOS
             )
 elseif (WIN32)
     target_link_libraries(CryptoCurrencyPrices PRIVATE ws2_32)
