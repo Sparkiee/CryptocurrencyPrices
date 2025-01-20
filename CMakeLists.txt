@@ -8,5 +8,11 @@ include_directories(${PROJECT_SOURCE_DIR}/libraries)
 
 add_executable(CryptoCurrencyPrices main.cpp)
 
-# Add the necessary Winsock library for networking
-target_link_libraries(CryptoCurrencyPrices ws2_32)
+if (APPLE)
+    target_link_libraries(CryptoCurrencyPrices PRIVATE
+            # קישור לספריות מתאימות ל-macOS
+            )
+elseif (WIN32)
+    target_link_libraries(CryptoCurrencyPrices PRIVATE ws2_32)
+endif()
+
