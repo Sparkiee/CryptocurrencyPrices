@@ -1,0 +1,36 @@
+# CMake build directory
+cmake-build-*/
+
+# CLion specific files
+.idea/
+*.iml
+
+# User-specific files
+*.user
+*.user.*
+
+# Debug/Release folders
+*/Debug/
+*/Release/
+
+# C++ build files
+*.o
+*.a
+*.so
+*.exe
+*.out
+*.dSYM/
+
+# Temporary files
+*.log
+*.tmp
+*.swp
+*.swo
+
+# Coverage reports
+*.gcno
+*.gcda
+
+# System files
+.DS_Store
+Thumbs.db
