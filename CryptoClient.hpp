@@ -13,4 +13,5 @@ public:
 private:
     std::string apiKey;
     httplib::Client cli{"http://rest.coinapi.io"};
+    double calculate24hChange(const std::vector<PricePoint>& history);
 };

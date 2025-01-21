@@ -3,17 +3,31 @@
 #include <fstream>
 #include <filesystem>
 
-void CryptoData::updatePrice(const std::string& symbol, double price) {
+void CryptoData::updatePrice(const std::string& symbol, double price,
+                           double percentChange24h, double priceChange24h) {
     std::lock_guard<std::mutex> lock(dataMutex);
     currentPrices[symbol].store(price);
 
-    PricePoint point{price, std::to_string(std::chrono::system_clock::now().time_since_epoch().count())};
+    PricePoint point{
+        price,
+        std::to_string(std::chrono::system_clock::now().time_since_epoch().count()),
+        percentChange24h,
+        priceChange24h
+    };
+
+    currentPriceData[symbol] = point;
     priceHistory[symbol].push_back(point);
 
-    // Keep only last 100 price points
-    if (priceHistory[symbol].size() > 100) {
+    // Keep only last 1440 price points (24 hours at 1-minute intervals)
+    if (priceHistory[symbol].size() > 1440) {
         priceHistory[symbol].erase(priceHistory[symbol].begin());
     }
+}
+
+PricePoint CryptoData::getPriceData(const std::string& symbol) const {
+    std::lock_guard<std::mutex> lock(dataMutex);
+    auto it = currentPriceData.find(symbol);
+    return (it != currentPriceData.end()) ? it->second : PricePoint{0.0, "", 0.0, 0.0};
 }
 
 double CryptoData::getPrice(const std::string& symbol) const {

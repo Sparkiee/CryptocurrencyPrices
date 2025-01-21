@@ -11,7 +11,9 @@
 std::atomic<bool> shouldExit{false};
 
 void dataFetchingThread(CryptoClient& client, CryptoData& data) {
-    const std::vector<std::string> symbols = {"BTC", "ETH", "XRP"};
+    const std::vector<std::string> symbols = {
+        "BTC", "ETH", "XRP", "SOL", "ADA", "BNB", "SHIB", "DOGE", "PEPE", "USDT"
+    };
 
     while (!shouldExit) {
         for (const auto& symbol : symbols) {
@@ -19,8 +21,26 @@ void dataFetchingThread(CryptoClient& client, CryptoData& data) {
                 data.saveToFile(symbol);
             }
         }
-        std::this_thread::sleep_for(std::chrono::seconds(30));
+        std::this_thread::sleep_for(std::chrono::seconds(60));
     }
+}
+
+void renderPriceChart(const std::string& symbol, const std::vector<PricePoint>& history) {
+    if (history.empty()) return;
+
+    std::vector<float> prices;
+    for (const auto& point : history) {
+        prices.push_back(static_cast<float>(point.price));
+    }
+
+    ImGui::PlotLines(("##" + symbol).c_str(),
+                     prices.data(),
+                     prices.size(),
+                     0,
+                     nullptr,
+                     FLT_MAX,
+                     FLT_MAX,
+                     ImVec2(500, 300));
 }
 
 int main() {
@@ -52,19 +72,40 @@ int main() {
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        ImGui::Begin("Cryptocurrency Dashboard");
+        ImGui::Begin("Cryptocurrency Dashboard", nullptr,
+                    ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 
-        // Display current prices
-        const std::vector<std::string> symbols = {"BTC", "ETH", "XRP"};
+        const std::vector<std::string> symbols = {
+            "BTC", "ETH", "XRP", "SOL", "ADA", "BNB", "SHIB", "DOGE", "PEPE", "USDT"
+        };
+
+        static std::string selectedSymbol;
+        ImGui::BeginChild("Prices", ImVec2(250, 0), true);
         for (const auto& symbol : symbols) {
-            double price = data.getPrice(symbol);
-            ImGui::Text("%s: $%.2f", symbol.c_str(), price);
-
-            if (ImGui::Button(("Show History##" + symbol).c_str())) {
-                // Display historical data in a popup or new window
-                auto history = data.getHistoricalData(symbol);
-                // Plot historical data using ImGui::PlotLines
+            auto priceData = data.getPriceData(symbol);
+            if (ImGui::Selectable(symbol.c_str(), selectedSymbol == symbol)) {
+                selectedSymbol = symbol;
             }
+            ImGui::SameLine(100);
+            ImGui::Text("$%.2f", priceData.price);
+        }
+        ImGui::EndChild();
+
+        ImGui::SameLine();
+
+        if (!selectedSymbol.empty()) {
+            ImGui::BeginChild("Chart", ImVec2(0, 0), true);
+            auto priceData = data.getPriceData(selectedSymbol);
+
+            ImGui::Text("%s Price Chart", selectedSymbol.c_str());
+            ImGui::Text("Current Price: $%.2f", priceData.price);
+            ImGui::Text("24h Change: %.2f%% ($%.2f)",
+                       priceData.percentChange24h,
+                       priceData.priceChange24h);
+
+            auto history = data.getHistoricalData(selectedSymbol);
+            renderPriceChart(selectedSymbol, history);
+            ImGui::EndChild();
         }
 
         ImGui::End();
