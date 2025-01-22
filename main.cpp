@@ -56,7 +56,7 @@ int main() {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init("#version 130");
+    ImGui_ImplOpenGL3_Init("#version 120");
 
     // Initialize crypto data and client
     CryptoData data;
@@ -100,8 +100,12 @@ int main() {
             ImGui::Text("%s Price Chart", selectedSymbol.c_str());
             ImGui::Text("Current Price: $%.2f", priceData.price);
             ImGui::Text("24h Change: %.2f%% ($%.2f)",
-                       priceData.percentChange24h,
-                       priceData.priceChange24h);
+                        priceData.percentChange24h,
+                        priceData.priceChange24h);
+
+            // Show starting price
+            double startingPrice = data.getStartingPrice(selectedSymbol);
+            ImGui::Text("Starting Price: $%.2f", startingPrice);
 
             auto history = data.getHistoricalData(selectedSymbol);
             renderPriceChart(selectedSymbol, history);
