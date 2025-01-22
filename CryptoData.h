@@ -22,10 +22,13 @@ public:
     void saveToFile(const std::string& symbol);
     void loadFromFile(const std::string& symbol);
     std::vector<PricePoint> getHistoricalData(const std::string& symbol) const;
+    double getStartingPrice(const std::string& symbol) const;
 
 private:
     mutable std::mutex dataMutex;
     std::unordered_map<std::string, std::vector<PricePoint>> priceHistory;
     std::unordered_map<std::string, std::atomic<double>> currentPrices;
     std::unordered_map<std::string, PricePoint> currentPriceData;
+    std::unordered_map<std::string, double> startingPrices;
+
 };

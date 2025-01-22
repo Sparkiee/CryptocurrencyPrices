@@ -4,8 +4,14 @@
 #include <filesystem>
 
 void CryptoData::updatePrice(const std::string& symbol, double price,
-                           double percentChange24h, double priceChange24h) {
+                             double percentChange24h, double priceChange24h) {
     std::lock_guard<std::mutex> lock(dataMutex);
+
+    // Store the starting price only once
+    if (startingPrices.find(symbol) == startingPrices.end()) {
+        startingPrices[symbol] = price;
+    }
+
     currentPrices[symbol].store(price);
 
     PricePoint point{
@@ -68,8 +74,15 @@ void CryptoData::loadFromFile(const std::string& symbol) {
     }
 }
 
+double CryptoData::getStartingPrice(const std::string& symbol) const {
+    std::lock_guard<std::mutex> lock(dataMutex);
+    auto it = startingPrices.find(symbol);
+    return (it != startingPrices.end()) ? it->second : 0.0;
+}
+
 std::vector<PricePoint> CryptoData::getHistoricalData(const std::string& symbol) const {
     std::lock_guard<std::mutex> lock(dataMutex);
     auto it = priceHistory.find(symbol);
     return (it != priceHistory.end()) ? it->second : std::vector<PricePoint>{};
 }
+
