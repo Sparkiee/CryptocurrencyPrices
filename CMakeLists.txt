@@ -29,7 +29,7 @@ set(IMGUI_SOURCES
         libraries/imgui/imgui_widgets.cpp
         libraries/imgui/backends/imgui_impl_glfw.cpp
         libraries/imgui/backends/imgui_impl_opengl3.cpp
-)
+        )
 
 # Add source files
 add_executable(CryptoCurrencyPrices
@@ -37,22 +37,30 @@ add_executable(CryptoCurrencyPrices
         CryptoClient.cpp
         ${IMGUI_SOURCES}
         CryptoData.cpp
-)
+        )
 
 # Link libraries
 target_link_libraries(CryptoCurrencyPrices
         PRIVATE
         glfw
         OpenGL::GL   # For Unix-like systems, this should work
-        ws2_32
-)
+        )
+
+# Add macOS-specific frameworks
+if(APPLE)
+    target_link_libraries(CryptoCurrencyPrices PRIVATE
+            "-framework Cocoa"
+            "-framework IOKit"
+            "-framework QuartzCore"
+            )
+endif()
 
 # On Windows, if OpenGL::GL is not found, link manually
 if(WIN32)
-    target_link_libraries(CryptoCurrencyPrices PRIVATE opengl32)
+    target_link_libraries(CryptoCurrencyPrices PRIVATE ws2_32 opengl32)
 endif()
 
 # Set the output directory
 set_target_properties(CryptoCurrencyPrices PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
-)
+        )
