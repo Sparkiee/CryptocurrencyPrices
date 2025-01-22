@@ -27,9 +27,9 @@ set(IMGUI_SOURCES
 # Add source files
 add_executable(CryptoCurrencyPrices
         main.cpp
-        CryptoData.cpp
         CryptoClient.cpp
         ${IMGUI_SOURCES}
+        CryptoData.cpp
 )
 
 # Link libraries

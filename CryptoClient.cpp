@@ -1,5 +1,5 @@
 // CryptoClient.cpp
-#include "CryptoClient.hpp"
+#include "CryptoClient.h"
 
 CryptoClient::CryptoClient(const std::string& apiKey) : apiKey(apiKey) {
     cli.set_connection_timeout(10);

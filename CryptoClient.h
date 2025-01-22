@@ -1,9 +1,9 @@
-// CryptoClient.hpp
+// CryptoClient.h
 #pragma once
 #include <string>
 #include "httplib.h"
 #include "json.hpp"
-#include "CryptoData.hpp"
+#include "CryptoData.h"
 
 class CryptoClient {
 public:
