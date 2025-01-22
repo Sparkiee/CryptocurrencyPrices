@@ -3,15 +3,22 @@ project(CryptoCurrencyPrices)
 
 set(CMAKE_CXX_STANDARD 20)
 
-# Find required packages
-find_package(glfw3 CONFIG REQUIRED)
-find_package(OpenGL REQUIRED)
+# Set the path to GLFW source if not using package managers
+set(GLFW_SOURCE_DIR "${PROJECT_SOURCE_DIR}/libraries/glfw")
+set(GLFW_BUILD_DIR "${GLFW_SOURCE_DIR}/build")
 
-# Add the 'libraries' folder to the include path
+# Add the GLFW include directory
 include_directories(
         ${PROJECT_SOURCE_DIR}/libraries
         ${PROJECT_SOURCE_DIR}/libraries/imgui
+        ${GLFW_SOURCE_DIR}/include
 )
+
+# Add GLFW as a subdirectory to handle its build
+add_subdirectory(${GLFW_SOURCE_DIR} ${GLFW_BUILD_DIR})
+
+# Find OpenGL package
+find_package(OpenGL REQUIRED)
 
 # ImGui source files
 set(IMGUI_SOURCES
@@ -36,9 +43,14 @@ add_executable(CryptoCurrencyPrices
 target_link_libraries(CryptoCurrencyPrices
         PRIVATE
         glfw
-        OpenGL::GL
+        OpenGL::GL   # For Unix-like systems, this should work
         ws2_32
 )
+
+# On Windows, if OpenGL::GL is not found, link manually
+if(WIN32)
+    target_link_libraries(CryptoCurrencyPrices PRIVATE opengl32)
+endif()
 
 # Set the output directory
 set_target_properties(CryptoCurrencyPrices PROPERTIES
