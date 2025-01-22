@@ -54,6 +54,11 @@ void CryptoData::saveToFile(const std::string& symbol) {
     }
 }
 
+void CryptoData::setHistoricalData(const std::string& symbol, const std::vector<PricePoint>& data) {
+    std::lock_guard<std::mutex> lock(dataMutex);
+    priceHistory[symbol] = data;
+}
+
 void CryptoData::loadFromFile(const std::string& symbol) {
     std::lock_guard<std::mutex> lock(dataMutex);
     std::ifstream file("data/" + symbol + "_history.txt");

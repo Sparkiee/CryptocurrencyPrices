@@ -23,6 +23,7 @@ public:
     void loadFromFile(const std::string& symbol);
     std::vector<PricePoint> getHistoricalData(const std::string& symbol) const;
     double getStartingPrice(const std::string& symbol) const;
+    void setHistoricalData(const std::string& symbol, const std::vector<PricePoint>& data);
 
 private:
     mutable std::mutex dataMutex;
