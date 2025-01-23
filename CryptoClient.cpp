@@ -13,24 +13,27 @@ CryptoClient::CryptoClient(const std::string& apiKey) : apiKey(apiKey) {
 
 // Convert time point to formatted string for API requests
 std::string CryptoClient::getTimeString(const std::chrono::system_clock::time_point& time) {
-    // Convert time point to time_t
+    // Convert to UTC time point
+    auto today = std::chrono::floor<std::chrono::days>(time);
+
+    // Convert time point to time_t in UTC
     auto itt = std::chrono::system_clock::to_time_t(time);
-    // Use string stream to format time
+
+    // Use UTC time for formatting
     std::ostringstream ss;
-    // Using iomanip to create  formatted timestamps
     ss << std::put_time(std::gmtime(&itt), "%Y-%m-%dT%H:%M:%S.000Z");
     return ss.str();
 }
 
 // Fetch historical price data for a cryptocurrency
 bool CryptoClient::fetchHistoricalData(const std::string& symbol, CryptoData& data) {
-    // Calculate time range for last 24 hours
+    // Calculate time range for last 100 minutes
     auto now = std::chrono::system_clock::now();
-    auto yesterday = now - std::chrono::hours(24);
+    auto hundredMinsAgo = now - std::chrono::minutes(100);
 
     // Construct API URL with time range
     std::string url = "/v1/exchangerate/" + symbol + "/USD/history?period_id=1MIN&time_start=" +
-                     getTimeString(yesterday) + "&time_end=" + getTimeString(now);
+                      getTimeString(hundredMinsAgo) + "&time_end=" + getTimeString(now);
 
     // Set API key in request headers
     httplib::Headers headers = {{"X-CoinAPI-Key", apiKey}};
