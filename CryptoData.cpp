@@ -55,6 +55,8 @@ void CryptoData::saveToFile(const std::string& symbol) {
     std::ofstream file("data/" + symbol + "_history.txt");
 
     if (file.is_open()) {
+        // Set precision to ensure full number representation
+        file << std::fixed << std::setprecision(10);
         // Write each price point as timestamp,price
         for (const auto& point : priceHistory[symbol]) {
             file << point.timestamp << "," << point.price << "\n";

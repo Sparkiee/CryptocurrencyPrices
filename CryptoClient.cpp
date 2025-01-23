@@ -29,11 +29,14 @@ std::string CryptoClient::getTimeString(const std::chrono::system_clock::time_po
 bool CryptoClient::fetchHistoricalData(const std::string& symbol, CryptoData& data) {
     // Calculate time range for last 100 minutes
     auto now = std::chrono::system_clock::now();
-    auto hundredMinsAgo = now - std::chrono::minutes(100);
+    auto twentyFourHoursAgo = now - std::chrono::hours(24);
 
     // Construct API URL with time range
-    std::string url = "/v1/exchangerate/" + symbol + "/USD/history?period_id=1MIN&time_start=" +
-                      getTimeString(hundredMinsAgo) + "&time_end=" + getTimeString(now);
+    std::string url = "/v1/exchangerate/" + symbol + "/USD/history" +
+                      "?period_id=1MIN" +
+                      "&time_start=" + getTimeString(twentyFourHoursAgo) +
+                      "&time_end=" + getTimeString(now) +
+                      "&limit=1440";  // Explicitly request 24 hours of data
 
     // Set API key in request headers
     httplib::Headers headers = {{"X-CoinAPI-Key", apiKey}};
