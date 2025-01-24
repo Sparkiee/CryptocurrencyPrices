@@ -53,21 +53,6 @@ void renderPriceChart(const std::string &symbol, const std::vector<PricePoint> &
                      maxPrice,
                      ImVec2(1000, 580));  // Increased chart size
 
-    // Add tooltip with time and price
-    if (ImGui::IsItemHovered()) {
-        ImGui::BeginTooltip();
-        ImGui::SetWindowFontScale(1.2f);  // Tooltip text size
-
-        int pos = static_cast<int>((ImGui::GetIO().MousePos.x - ImGui::GetItemRectMin().x) /
-                                   ImGui::GetItemRectSize().x * (prices.size() - 1));
-        if (pos >= 0 && pos < history.size()) {
-            const auto &point = history[pos];
-            ImGui::Text("Time: %s", point.timestamp.c_str());
-            ImGui::Text("Price: $%.2f", point.price);
-        }
-        ImGui::EndTooltip();
-    }
-
     ImGui::PopFont();
 }
 
