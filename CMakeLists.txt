@@ -17,6 +17,9 @@ include_directories(
 # Add GLFW as a subdirectory to handle its build
 add_subdirectory(${GLFW_SOURCE_DIR} ${GLFW_BUILD_DIR})
 
+add_subdirectory(libraries/fmt)
+
+
 # Find OpenGL package
 find_package(OpenGL REQUIRED)
 
@@ -44,6 +47,7 @@ target_link_libraries(CryptoCurrencyPrices
         PRIVATE
         glfw
         OpenGL::GL   # For Unix-like systems, this should work
+        fmt::fmt
         )
 
 # Add macOS-specific frameworks

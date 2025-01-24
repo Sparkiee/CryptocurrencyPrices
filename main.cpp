@@ -7,16 +7,17 @@
 #include <GLFW/glfw3.h>
 #include "CryptoClient.h"
 #include "CryptoData.h"
+#include <fmt/core.h>
 
 std::atomic<bool> shouldExit{false};
 
-void dataFetchingThread(CryptoClient& client, CryptoData& data) {
+void dataFetchingThread(CryptoClient &client, CryptoData &data) {
     const std::vector<std::string> symbols = {
-        "BTC", "ETH", "XRP", "SOL", "ADA", "BNB", "SHIB", "DOGE", "PEPE", "USDT"
+            "BTC", "ETH", "XRP", "SOL", "ADA", "BNB", "SHIB", "DOGE", "PEPE", "USDT"
     };
 
     while (!shouldExit) {
-        for (const auto& symbol : symbols) {
+        for (const auto &symbol: symbols) {
             if (client.fetchPrice(symbol, data)) {
                 data.saveToFile(symbol);
             }
@@ -25,7 +26,7 @@ void dataFetchingThread(CryptoClient& client, CryptoData& data) {
     }
 }
 
-void renderPriceChart(const std::string& symbol, const std::vector<PricePoint>& history) {
+void renderPriceChart(const std::string &symbol, const std::vector<PricePoint> &history) {
     if (history.empty()) return;
 
     // Increase font size for better readability
@@ -36,7 +37,7 @@ void renderPriceChart(const std::string& symbol, const std::vector<PricePoint>& 
     float minPrice = FLT_MAX;
     float maxPrice = -FLT_MAX;
 
-    for (const auto& point : history) {
+    for (const auto &point: history) {
         prices.push_back(static_cast<float>(point.price));
         minPrice = std::min(minPrice, static_cast<float>(point.price));
         maxPrice = std::max(maxPrice, static_cast<float>(point.price));
@@ -58,9 +59,9 @@ void renderPriceChart(const std::string& symbol, const std::vector<PricePoint>& 
         ImGui::SetWindowFontScale(1.2f);  // Tooltip text size
 
         int pos = static_cast<int>((ImGui::GetIO().MousePos.x - ImGui::GetItemRectMin().x) /
-                                  ImGui::GetItemRectSize().x * (prices.size() - 1));
+                                   ImGui::GetItemRectSize().x * (prices.size() - 1));
         if (pos >= 0 && pos < history.size()) {
-            const auto& point = history[pos];
+            const auto &point = history[pos];
             ImGui::Text("Time: %s", point.timestamp.c_str());
             ImGui::Text("Price: $%.2f", point.price);
         }
@@ -73,7 +74,7 @@ void renderPriceChart(const std::string& symbol, const std::vector<PricePoint>& 
 int main() {
     // Initialize GLFW and ImGui
     if (!glfwInit()) return 1;
-    GLFWwindow* window = glfwCreateWindow(1280, 720, "Crypto Dashboard", nullptr, nullptr);
+    GLFWwindow *window = glfwCreateWindow(1280, 720, "Crypto Dashboard", nullptr, nullptr);
     if (!window) {
         glfwTerminate();
         return 1;
@@ -83,7 +84,7 @@ int main() {
     // Initialize ImGui with larger font
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO &io = ImGui::GetIO();
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 120");
 
@@ -109,18 +110,18 @@ int main() {
         ImGui::NewFrame();
 
         ImGui::Begin("Cryptocurrency Dashboard", nullptr,
-                    ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+                     ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 
         // Increase window size for better layout
         ImGui::SetWindowSize(ImVec2(1600, 900), ImGuiCond_FirstUseEver);
 
         const std::vector<std::string> symbols = {
-            "BTC", "ETH", "XRP", "SOL", "ADA", "BNB", "SHIB", "DOGE", "PEPE", "USDT"
+                "BTC", "ETH", "XRP", "SOL", "ADA", "BNB", "SHIB", "DOGE", "PEPE", "USDT"
         };
 
         static std::string selectedSymbol;
         ImGui::BeginChild("Prices", ImVec2(350, 0), true);  // Increased width
-        for (const auto& symbol : symbols) {
+        for (const auto &symbol: symbols) {
             auto priceData = data.getPriceData(symbol);
             if (ImGui::Selectable(symbol.c_str(), selectedSymbol == symbol)) {
                 selectedSymbol = symbol;
@@ -128,7 +129,13 @@ int main() {
             ImGui::SameLine(150);  // Increased spacing
 
             // Format large numbers with commas
-            std::string priceStr = std::format("{:.2f}", priceData.price);
+            std::string priceStr;
+            if ((int) priceData.price == 0 ){
+                priceStr = fmt::format("{:.5f}", priceData.price);
+            } else {
+                priceStr = fmt::format("{:.2f}", priceData.price);
+            }
+
             size_t decimalPos = priceStr.find('.');
             std::string integerPart = priceStr.substr(0, decimalPos);
             std::string decimalPart = priceStr.substr(decimalPos);
@@ -149,10 +156,10 @@ int main() {
             auto priceData = data.getPriceData(selectedSymbol);
 
             // Format numbers with commas for display
-            std::string priceStr = std::format("{:.2f}", priceData.price);
-            std::string startPriceStr = std::format("{:.2f}", data.getStartingPrice(selectedSymbol));
+            std::string priceStr = fmt::format("{:.2f}", priceData.price);
+            std::string startPriceStr = fmt::format("{:.2f}", data.getStartingPrice(selectedSymbol));
 
-            for (auto* str : {&priceStr, &startPriceStr}) {
+            for (auto *str: {&priceStr, &startPriceStr}) {
                 size_t decimalPos = str->find('.');
                 std::string integerPart = str->substr(0, decimalPos);
                 std::string decimalPart = str->substr(decimalPos);
