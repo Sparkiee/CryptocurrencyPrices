@@ -102,7 +102,7 @@ void renderPriceChart(const std::string &symbol, const std::vector<PricePoint> &
                      minPrice,
                      maxPrice,
                      ImVec2(1000, 580)); // Increased chart size
-                     
+
     ImGui::PopFont();
 }
 
@@ -170,7 +170,7 @@ int main() {
             // Format large numbers with commas
             std::string priceStr;
             if ((int) priceData.price == 0) {
-                priceStr = fmt::format("{:.5f}", priceData.price);
+                priceStr = fmt::format("{:.7f}", priceData.price);
             } else {
                 priceStr = fmt::format("{:.2f}", priceData.price);
             }
@@ -195,9 +195,15 @@ int main() {
             ImGui::BeginChild("Chart", ImVec2(0, 0), true);
             auto priceData = data.getPriceData(selectedSymbol);
 
-            // Format numbers with commas for display
-            std::string priceStr = fmt::format("{:.2f}", priceData.price);
-            std::string startPriceStr = fmt::format("{:.2f}", data.getStartingPrice(selectedSymbol));
+            std::string priceStr;
+            std::string startPriceStr;
+            if ((int) priceData.price == 0) {
+                priceStr = fmt::format("{:.10f}", priceData.price);
+                startPriceStr = fmt::format("{:.10f}", data.getStartingPrice(selectedSymbol));
+            } else {
+                priceStr = fmt::format("{:.2f}", priceData.price);
+                startPriceStr = fmt::format("{:.2f}", data.getStartingPrice(selectedSymbol));
+            }
 
             for (auto *str: {&priceStr, &startPriceStr}) {
                 size_t decimalPos = str->find('.');
@@ -214,9 +220,15 @@ int main() {
             ImGui::Text("%s Price Chart", selectedSymbol.c_str());
             ImGui::Text("Current Price: $%s", priceStr.c_str());
             ImGui::Text("Starting Price: $%s", startPriceStr.c_str());
-            ImGui::Text("24h Change: %.2f%% ($%.2f)",
-                        priceData.percentChange24h,
-                        priceData.priceChange24h);
+            if ((int) priceData.price == 0) {
+                ImGui::Text("24h Change: %.2f%% ($%.10f)",
+                            priceData.percentChange24h,
+                            priceData.priceChange24h);
+            } else {
+                ImGui::Text("24h Change: %.2f%% ($%.2f)",
+                            priceData.percentChange24h,
+                            priceData.priceChange24h);
+            }
 
             // Render price history chart
             auto history = data.getHistoricalData(selectedSymbol);
