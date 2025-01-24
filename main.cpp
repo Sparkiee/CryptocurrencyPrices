@@ -27,20 +27,16 @@ UI Rendering:
 std::atomic<bool> shouldExit{false};
 
 // Background thread to periodically fetch cryptocurrency prices
-void dataFetchingThread(CryptoClient &client, CryptoData &data)
-{
+void dataFetchingThread(CryptoClient &client, CryptoData &data) {
     // List of cryptocurrencies to track
     const std::vector<std::string> symbols = {
-        "BTC", "ETH", "XRP", "SOL", "ADA", "BNB", "SHIB", "DOGE", "PEPE", "USDT"};
+            "BTC", "ETH", "XRP", "SOL", "ADA", "BNB", "SHIB", "DOGE", "PEPE", "USDT"};
 
     // Continuously fetch prices until exit is signaled
-    while (!shouldExit)
-    {
-        for (const auto &symbol : symbols)
-        {
+    while (!shouldExit) {
+        for (const auto &symbol: symbols) {
             // Fetch and save price data for each cryptocurrency
-            if (client.fetchPrice(symbol, data))
-            {
+            if (client.fetchPrice(symbol, data)) {
                 data.saveToFile(symbol);
             }
         }
@@ -50,8 +46,7 @@ void dataFetchingThread(CryptoClient &client, CryptoData &data)
 }
 
 // Render interactive price chart for a selected cryptocurrency
-void renderPriceChart(const std::string &symbol, const std::vector<PricePoint> &fullHistory)
-{
+void renderPriceChart(const std::string &symbol, const std::vector<PricePoint> &fullHistory) {
     // Skip rendering if no history available
     if (fullHistory.empty())
         return;
@@ -66,12 +61,10 @@ void renderPriceChart(const std::string &symbol, const std::vector<PricePoint> &
 
     // Interval selection buttons
     ImGui::BeginChild("Interval Selector", ImVec2(0, 50), true);
-    for (int i = 0; i < intervalNames.size(); ++i)
-    {
+    for (int i = 0; i < intervalNames.size(); ++i) {
         if (i > 0)
             ImGui::SameLine();
-        if (ImGui::Button(intervalNames[i].c_str()))
-        {
+        if (ImGui::Button(intervalNames[i].c_str())) {
             intervalSelection = i;
         }
     }
@@ -80,8 +73,7 @@ void renderPriceChart(const std::string &symbol, const std::vector<PricePoint> &
     // Filter history based on selected interval
     displayHistory.clear();
     int intervalMultiplier = intervalMultipliers[intervalSelection];
-    for (size_t i = 0; i < fullHistory.size(); i += intervalMultiplier)
-    {
+    for (size_t i = 0; i < fullHistory.size(); i += intervalMultiplier) {
         displayHistory.push_back(fullHistory[i]);
     }
 
@@ -91,8 +83,7 @@ void renderPriceChart(const std::string &symbol, const std::vector<PricePoint> &
     float maxPrice = -FLT_MAX;
 
     // Convert prices and find min/max for chart scaling
-    for (const auto &point : displayHistory)
-    {
+    for (const auto &point: displayHistory) {
         prices.push_back(static_cast<float>(point.price));
         minPrice = std::min(minPrice, static_cast<float>(point.price));
         maxPrice = std::max(maxPrice, static_cast<float>(point.price));
@@ -111,40 +102,16 @@ void renderPriceChart(const std::string &symbol, const std::vector<PricePoint> &
                      minPrice,
                      maxPrice,
                      ImVec2(1000, 580)); // Increased chart size
-
-    // Add interactive tooltip showing time and price on hover
-    if (ImGui::IsItemHovered())
-    {
-        ImGui::BeginTooltip();
-        ImGui::SetWindowFontScale(1.2f); // Tooltip text size
-
-        // Calculate which price point is being hovered
-        int pos = static_cast<int>((ImGui::GetIO().MousePos.x - ImGui::GetItemRectMin().x) /
-                                   ImGui::GetItemRectSize().x * (displayHistory.size() - 1));
-        if (pos >= 0 && pos < displayHistory.size())
-        {
-            const auto &point = displayHistory[pos];
-
-            // Display full price with full precision
-            std::string priceStr = std::format("{:.10f}", point.price);
-            ImGui::Text("Time: %s", point.timestamp.c_str());
-            ImGui::Text("Price: $%s", priceStr.c_str());
-        }
-
-        ImGui::EndTooltip();
-    }
-
+                     
     ImGui::PopFont();
 }
 
-int main()
-{
+int main() {
     // Initialize GLFW for window and OpenGL context
     if (!glfwInit())
         return 1;
     GLFWwindow *window = glfwCreateWindow(1920, 1080, "Crypto Dashboard", nullptr, nullptr);
-    if (!window)
-    {
+    if (!window) {
         glfwTerminate();
         return 1;
     }
@@ -170,8 +137,7 @@ int main()
     std::thread fetchThread(dataFetchingThread, std::ref(client), std::ref(data));
 
     // Main UI rendering loop
-    while (!glfwWindowShouldClose(window))
-    {
+    while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -186,31 +152,26 @@ int main()
 
         // List of tracked cryptocurrencies
         const std::vector<std::string> symbols = {
-            "BTC", "ETH", "XRP", "SOL", "ADA", "BNB", "SHIB", "DOGE", "PEPE", "USDT"};
+                "BTC", "ETH", "XRP", "SOL", "ADA", "BNB", "SHIB", "DOGE", "PEPE", "USDT"};
 
         // Track selected cryptocurrency for detailed view
         static std::string selectedSymbol;
 
         // Cryptocurrency price list sidebar
         ImGui::BeginChild("Prices", ImVec2(350, 0), true); // Increased width
-        for (const auto &symbol : symbols)
-        {
+        for (const auto &symbol: symbols) {
             // Create selectable list item for each cryptocurrency
             auto priceData = data.getPriceData(symbol);
-            if (ImGui::Selectable(symbol.c_str(), selectedSymbol == symbol))
-            {
+            if (ImGui::Selectable(symbol.c_str(), selectedSymbol == symbol)) {
                 selectedSymbol = symbol;
             }
             ImGui::SameLine(150); // Increased spacing
 
             // Format large numbers with commas
             std::string priceStr;
-            if ((int)priceData.price == 0)
-            {
+            if ((int) priceData.price == 0) {
                 priceStr = fmt::format("{:.5f}", priceData.price);
-            }
-            else
-            {
+            } else {
                 priceStr = fmt::format("{:.2f}", priceData.price);
             }
 
@@ -219,8 +180,7 @@ int main()
             std::string decimalPart = priceStr.substr(decimalPos);
 
             // Add commas for thousands separator
-            for (int i = integerPart.length() - 3; i > 0; i -= 3)
-            {
+            for (int i = integerPart.length() - 3; i > 0; i -= 3) {
                 integerPart.insert(i, ",");
             }
 
@@ -231,8 +191,7 @@ int main()
         ImGui::SameLine();
 
         // Detailed view for selected cryptocurrency
-        if (!selectedSymbol.empty())
-        {
+        if (!selectedSymbol.empty()) {
             ImGui::BeginChild("Chart", ImVec2(0, 0), true);
             auto priceData = data.getPriceData(selectedSymbol);
 
@@ -240,14 +199,12 @@ int main()
             std::string priceStr = fmt::format("{:.2f}", priceData.price);
             std::string startPriceStr = fmt::format("{:.2f}", data.getStartingPrice(selectedSymbol));
 
-            for (auto *str : {&priceStr, &startPriceStr})
-            {
+            for (auto *str: {&priceStr, &startPriceStr}) {
                 size_t decimalPos = str->find('.');
                 std::string integerPart = str->substr(0, decimalPos);
                 std::string decimalPart = str->substr(decimalPos);
 
-                for (int i = integerPart.length() - 3; i > 0; i -= 3)
-                {
+                for (int i = integerPart.length() - 3; i > 0; i -= 3) {
                     integerPart.insert(i, ",");
                 }
                 *str = integerPart + decimalPart;
