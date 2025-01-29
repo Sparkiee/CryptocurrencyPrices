@@ -142,7 +142,9 @@ int main() {
 
     // Main UI rendering loop
     while (!glfwWindowShouldClose(window)) {
+        // fetch inputs (mouse clicks & keyboard)
         glfwPollEvents();
+        // renders a new imgui frame
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
