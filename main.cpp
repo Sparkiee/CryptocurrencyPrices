@@ -27,21 +27,25 @@ UI Rendering:
 std::atomic<bool> shouldExit{false};
 
 // Background thread to periodically fetch cryptocurrency prices
-void dataFetchingThread(CryptoClient &client, CryptoData &data) {
-    // List of cryptocurrencies to track
-    const std::vector<std::string> symbols = {
-            "BTC", "ETH", "XRP", "SOL", "ADA", "BNB", "SHIB", "DOGE", "PEPE", "USDT"};
-
-    // Continuously fetch prices until exit is signaled
+void fetchPriceForSymbol(CryptoClient &client, CryptoData &data, const std::string &symbol) {
     while (!shouldExit) {
-        for (const auto &symbol: symbols) {
-            // Fetch and save price data for each cryptocurrency
-            if (client.fetchPrice(symbol, data)) {
-                data.saveToFile(symbol);
-            }
+        if (client.fetchPrice(symbol, data)) {
+            data.saveToFile(symbol);
         }
-        // Wait for 1 minute before next update
         std::this_thread::sleep_for(std::chrono::seconds(60));
+    }
+}
+
+void dataFetchingThread(CryptoClient &client, CryptoData &data) {
+    const std::vector<std::string> symbols = {"BTC", "ETH", "XRP", "SOL", "ADA", "BNB", "SHIB", "DOGE", "PEPE", "USDT"};
+    std::vector<std::thread> threads;
+
+    for (const auto &symbol : symbols) {
+        threads.emplace_back(fetchPriceForSymbol, std::ref(client), std::ref(data), symbol);
+    }
+
+    for (auto &t : threads) {
+        t.join();  // Ensure all threads complete before function exit
     }
 }
 
