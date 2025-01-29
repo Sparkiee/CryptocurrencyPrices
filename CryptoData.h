@@ -28,14 +28,10 @@ class CryptoData {
 public:
     // Update price information for a specific cryptocurrency
     void updatePrice(const std::string& symbol, double price, double percentChange24h, double priceChange24h);
-    // Retrieve current price for a cryptocurrency
-    double getPrice(const std::string& symbol) const;
     // Get comprehensive price data for a cryptocurrency
     PricePoint getPriceData(const std::string& symbol) const;
     // Save price history to a file for persistence
     void saveToFile(const std::string& symbol);
-    // Load price history from a file
-    void loadFromFile(const std::string& symbol);
     // Retrieve historical price data for a cryptocurrency
     std::vector<PricePoint> getHistoricalData(const std::string& symbol) const;
     // Get the initial price when tracking began

@@ -40,12 +40,6 @@ PricePoint CryptoData::getPriceData(const std::string& symbol) const {
     return (it != currentPriceData.end()) ? it->second : PricePoint{0.0, "", 0.0, 0.0};
 }
 
-double CryptoData::getPrice(const std::string& symbol) const {
-    std::lock_guard<std::mutex> lock(dataMutex);
-    auto it = currentPrices.find(symbol);
-    return (it != currentPrices.end()) ? it->second.load() : 0.0;
-}
-
 // Save price history to a file for persistent storage
 void CryptoData::saveToFile(const std::string& symbol) {
     std::lock_guard<std::mutex> lock(dataMutex);
@@ -67,26 +61,6 @@ void CryptoData::saveToFile(const std::string& symbol) {
 void CryptoData::setHistoricalData(const std::string& symbol, const std::vector<PricePoint>& data) {
     std::lock_guard<std::mutex> lock(dataMutex);
     priceHistory[symbol] = data;
-}
-
-void CryptoData::loadFromFile(const std::string& symbol) {
-    std::lock_guard<std::mutex> lock(dataMutex);
-    std::ifstream file("data/" + symbol + "_history.txt");
-
-    if (file.is_open()) {
-        priceHistory[symbol].clear();
-        std::string line;
-        while (std::getline(file, line)) {
-            size_t comma = line.find(',');
-            if (comma != std::string::npos) {
-                PricePoint point{
-                    std::stod(line.substr(comma + 1)),
-                    line.substr(0, comma)
-                };
-                priceHistory[symbol].push_back(point);
-            }
-        }
-    }
 }
 
 double CryptoData::getStartingPrice(const std::string& symbol) const {

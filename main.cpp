@@ -38,15 +38,11 @@ void fetchPriceForSymbol(CryptoClient &client, CryptoData &data, const std::stri
 
 void dataFetchingThread(CryptoClient &client, CryptoData &data) {
     const std::vector<std::string> symbols = {"BTC", "ETH", "XRP", "SOL", "ADA", "BNB", "SHIB", "DOGE", "PEPE", "USDT"};
-    std::vector<std::thread> threads;
 
     for (const auto &symbol : symbols) {
+        // Running threads in detach mode so they will run indipendently
         std::thread(fetchPriceForSymbol, std::ref(client), std::ref(data), symbol).detach();
     }
-
-    // for (auto &t : threads) {
-    //     t.join();  // Ensure all threads complete before function exit
-    // }
 }
 
 // Render interactive price chart for a selected cryptocurrency
@@ -56,7 +52,7 @@ void renderPriceChart(const std::string &symbol, const std::vector<PricePoint> &
         return;
 
     // Static variables to maintain state between function calls
-    static int intervalSelection = 1; // Default to 1-minute intervals
+    static int intervalSelection = 1; // Default to 5-minute intervals
     static std::vector<PricePoint> displayHistory;
 
     // Interval mapping

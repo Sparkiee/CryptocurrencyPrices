@@ -54,8 +54,8 @@ bool CryptoClient::fetchHistoricalData(const std::string& symbol, CryptoData& da
                 PricePoint pricePoint{
                     point["rate_close"].get<double>(),
                     point["time_period_start"].get<std::string>(),
-                    0.0,  // Will be calculated later
-                    0.0   // Will be calculated later
+                    0.0,  // Will be calculated later - change %
+                    0.0   // Will be calculated later - price change
                 };
                 history.push_back(pricePoint);
             }
