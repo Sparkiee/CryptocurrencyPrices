@@ -32,6 +32,13 @@ void CryptoData::updatePrice(const std::string& symbol, double price,
     }
 }
 
+// Retrieve comprehensive price data for a specific cryptocurrency
+PricePoint CryptoData::getPriceData(const std::string& symbol) const {
+    std::lock_guard<std::mutex> lock(dataMutex);
+    auto it = currentPriceData.find(symbol);
+    // Return price data or a default zero-filled price point
+    return (it != currentPriceData.end()) ? it->second : PricePoint{0.0, "", 0.0, 0.0};
+}
 
 // Save price history to a file for persistent storage
 void CryptoData::saveToFile(const std::string& symbol) {
