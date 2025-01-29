@@ -131,7 +131,7 @@ int main() {
 
     // Initialize cryptocurrency data management and client
     CryptoData data;
-    CryptoClient client("bdbc3a83-8c73-4f95-8564-4fb4b51a17d1");
+    CryptoClient client("606b1972-59c5-45e9-b2be-beb836ee8ae7");
 
     // Start background data fetching thread
     std::thread fetchThread(dataFetchingThread, std::ref(client), std::ref(data));
