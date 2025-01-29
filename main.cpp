@@ -41,12 +41,12 @@ void dataFetchingThread(CryptoClient &client, CryptoData &data) {
     std::vector<std::thread> threads;
 
     for (const auto &symbol : symbols) {
-        threads.emplace_back(fetchPriceForSymbol, std::ref(client), std::ref(data), symbol);
+        std::thread(fetchPriceForSymbol, std::ref(client), std::ref(data), symbol).detach();
     }
 
-    for (auto &t : threads) {
-        t.join();  // Ensure all threads complete before function exit
-    }
+    // for (auto &t : threads) {
+    //     t.join();  // Ensure all threads complete before function exit
+    // }
 }
 
 // Render interactive price chart for a selected cryptocurrency
