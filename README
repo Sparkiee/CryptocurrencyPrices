@@ -1,0 +1,203 @@
+# Cryptocurrency Dashboard
+
+A real-time cryptocurrency price tracking dashboard built with C++ that provides live price updates and interactive charts for multiple cryptocurrencies.
+
+## Features
+
+- Real-time price tracking for popular cryptocurrencies (BTC, ETH, XRP, SOL, ADA, BNB, SHIB, DOGE, PEPE, USDT)
+- Interactive price charts with multiple time intervals (1min, 5min, 30min, 1hr, 5hr)
+- Thread-safe data management for concurrent price updates
+- Automatic price data persistence
+- Clean and responsive ImGui-based user interface
+- Configurable chart display with automatic scaling
+
+## Prerequisites
+
+- C++17 compatible compiler
+- GLFW3
+- OpenGL
+- ImGui
+- fmt library
+- nlohmann/json
+- cpp-httplib
+
+## Building the Project
+
+1. Clone the repository:
+```bash
+git clone [repository-url]
+cd crypto-dashboard
+```
+
+2. Install dependencies (using vcpkg or your system's package manager):
+```bash
+vcpkg install glfw3
+vcpkg install imgui
+vcpkg install fmt
+vcpkg install nlohmann-json
+vcpkg install cpp-httplib
+```
+
+3. Build the project:
+```bash
+mkdir build
+cd build
+cmake ..
+make
+```
+
+## Configuration
+
+Before running the dashboard, you'll need to:
+
+1. Obtain an API key from CoinAPI (https://www.coinapi.io/)
+2. Replace the API key in `main.cpp`:
+```cpp
+CryptoClient client("your-api-key-here");
+```
+
+## Usage
+
+1. Launch the application:
+```bash
+./crypto-dashboard
+```
+
+2. The dashboard will automatically start fetching price data for all configured cryptocurrencies
+3. Click on any cryptocurrency in the left sidebar to view its detailed chart
+4. Use the interval buttons above the chart to adjust the time granularity
+5. Price data is automatically saved to the `data` directory for persistence
+
+## Project Structure
+
+- `main.cpp` - Application entry point and UI rendering
+- `CryptoClient.h/cpp` - Handles API interactions with CoinAPI
+- `CryptoData.h/cpp` - Manages cryptocurrency price data storage and retrieval
+- `data/` - Directory for persistent price history storage
+
+## Technical Details
+
+- Uses atomic operations for thread-safe price updates
+- Implements RAII-style resource management
+- Supports high-precision price display for low-value cryptocurrencies
+- Automatic price formatting with thousand separators
+- Background thread for periodic price updates (60-second intervals)
+
+## License
+
+[Add your license information here]
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
+
+## Acknowledgments
+
+- ImGui for the user interface framework
+- CoinAPI for cryptocurrency price data
+- GLFW for OpenGL window management# Cryptocurrency Dashboard
+
+A real-time cryptocurrency price tracking dashboard built with C++ that provides live price updates and interactive charts for multiple cryptocurrencies.
+
+## Features
+
+- Real-time price tracking for popular cryptocurrencies (BTC, ETH, XRP, SOL, ADA, BNB, SHIB, DOGE, PEPE, USDT)
+- Interactive price charts with multiple time intervals (1min, 5min, 30min, 1hr, 5hr)
+- Thread-safe data management for concurrent price updates
+- Automatic price data persistence
+- Clean and responsive ImGui-based user interface
+- Configurable chart display with automatic scaling
+
+## Prerequisites
+
+- C++17 compatible compiler
+- GLFW3
+- OpenGL
+- ImGui
+- fmt library
+- nlohmann/json
+- cpp-httplib
+
+## Building the Project
+
+1. Clone the repository:
+```bash
+git clone [repository-url]
+cd crypto-dashboard
+```
+
+2. Install dependencies (using vcpkg or your system's package manager):
+```bash
+vcpkg install glfw3
+vcpkg install imgui
+vcpkg install fmt
+vcpkg install nlohmann-json
+vcpkg install cpp-httplib
+```
+
+3. Build the project:
+```bash
+mkdir build
+cd build
+cmake ..
+make
+```
+
+## Configuration
+
+Before running the dashboard, you'll need to:
+
+1. Obtain an API key from CoinAPI (https://www.coinapi.io/)
+2. Replace the API key in `main.cpp`:
+```cpp
+CryptoClient client("your-api-key-here");
+```
+
+## Usage
+
+1. Launch the application:
+```bash
+./crypto-dashboard
+```
+
+2. The dashboard will automatically start fetching price data for all configured cryptocurrencies
+3. Click on any cryptocurrency in the left sidebar to view its detailed chart
+4. Use the interval buttons above the chart to adjust the time granularity
+5. Price data is automatically saved to the `data` directory for persistence
+
+## Project Structure
+
+- `main.cpp` - Application entry point and UI rendering
+- `CryptoClient.h/cpp` - Handles API interactions with CoinAPI
+- `CryptoData.h/cpp` - Manages cryptocurrency price data storage and retrieval
+- `data/` - Directory for persistent price history storage
+
+## Technical Details
+
+- Uses atomic operations for thread-safe price updates
+- Implements RAII-style resource management
+- Supports high-precision price display for low-value cryptocurrencies
+- Automatic price formatting with thousand separators
+- Background thread for periodic price updates (60-second intervals)
+
+## License
+
+[Add your license information here]
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
+
+## Acknowledgments
+
+- ImGui for the user interface framework
+- CoinAPI for cryptocurrency price data
+- GLFW for OpenGL window management
