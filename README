@@ -83,10 +83,6 @@ CryptoClient client("your-api-key-here");
 - Automatic price formatting with thousand separators
 - Background thread for periodic price updates (60-second intervals)
 
-## License
-
-[Add your license information here]
-
 ## Contributing
 
 1. Fork the repository
